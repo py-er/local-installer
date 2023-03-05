@@ -46,16 +46,21 @@ then
     fo=0
 
     echo "Downloading $program..."
-    str=$(repeatChar "=" $(($fo/$packages*$po)))$(repeatChar "-" $(($po-($fo/$packages*$po))) )
-    echo -ne "\r[$str] ($(($fo/$po))%)"
+    big=$(((($po*100/$packages)*$fo)/100))
+    small=$(($po-$big))
+    str=$(repeatChar "=" $big)$(repeatChar "-" $small )
+    echo -ne "\r[$str] ($(($fo*100/$packages))%)"
 
     for i in $dependencies
     do
         sudo pacman -Sw --noconfirm $i &>/dev/null
 
         fo=$(($fo+1))
-        str=$(repeatChar "=" $(($fo/$packages*$po)))$(repeatChar "-" $(($po-($fo/$packages*$po))) )
-        echo -ne "\r[$str] ($(($fo/$po))%)"
+
+        big=$(((($po*100/$packages)*$fo)/100))
+        small=$(($po-$big))
+        str=$(repeatChar "=" $big)$(repeatChar "-" $small )
+        echo -ne "\r[$str] ($(($fo*100/$packages))%)"
 
     done
     sudo mv /var/cache/pacman/pkg/* .
