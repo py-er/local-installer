@@ -30,11 +30,26 @@ cd $program-install
 
 if [[ $PM == "apt" ]]
 then
+    packages=$(echo $dependencies | wc -l)
+    po=30
+    fo=0
+
     echo "Downloading $program..."
+    big=$(((($po*100/$packages)*$fo)/100))
+    small=$(($po-$big))
+    str=$(repeatChar "=" $big)$(repeatChar "-" $small )
+    echo -ne "\r[$str] ($(($fo*100/$packages))%)"
+
     for i in $dependencies
     do
         apt download $i &>/dev/null || fail=true
         $fail && break
+        fo=$(($fo+1))
+
+        big=$(((($po*100/$packages)*$fo)/100))
+        small=$(($po-$big))
+        str=$(repeatChar "=" $big)$(repeatChar "-" $small )
+        echo -ne "\r[$str] ($(($fo*100/$packages))%)"
     done
 elif [[ $PM == "pacman" ]]
 then
